@@ -20,4 +20,25 @@ public class OperadoraController : ControllerBase
 
         conexao.Open();
     }
+
+    [HttpGet]
+    public IList<string> BuscarTodas()
+    {
+        string sql = "SELECT * FROM TbOperadora";
+        SqlCommand command = new SqlCommand(sql, conexao);
+
+        SqlDataReader reader = command.ExecuteReader();
+
+        var retorno = new List<string>();
+
+        while (reader.Read())
+        {
+            //string nome = reader.GetString(1);
+            string nome = reader["OpeNome"].ToString() ?? "";
+
+            retorno.Add(nome);
+        }
+
+        return retorno;
+    }
 }
