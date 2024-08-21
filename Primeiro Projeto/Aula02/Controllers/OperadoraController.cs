@@ -1,4 +1,5 @@
-﻿using Aula02.Repositories;
+﻿using Aula02.Models;
+using Aula02.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
@@ -41,12 +42,52 @@ public class OperadoraController : ControllerBase
         }
     }
 
-    [HttpPost]
-    public IActionResult Adicionar(string nome)
+    [HttpPost]                //Não é necessário o [FromBody] nesse caso
+    public IActionResult Adicionar([FromBody] Operadora operadora)
     {
         try
         {
-            return Ok(repository.Adicionar(nome));
+            return Ok(repository.Adicionar(operadora));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPut]
+    public IActionResult Alerar(Operadora operadora)
+    {
+        try
+        {
+            return Ok(repository.Alterar(operadora));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpDelete]
+    public IActionResult Apagar(int codigo)
+    {
+        try
+        {
+            var result = repository.Apagar(codigo);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpGet("{codigo}")] // [Route ("{codigo}")]
+    public IActionResult BuscarPorId(int codigo)
+    {
+        try
+        {
+            return Ok(repository.BuscarPorId(codigo));
         }
         catch (Exception ex)
         {

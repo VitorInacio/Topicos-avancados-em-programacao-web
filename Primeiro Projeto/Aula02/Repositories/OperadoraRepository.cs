@@ -1,4 +1,6 @@
-﻿using System.Data.SqlClient;
+﻿using Aula02.Models;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace Aula02.Repositories
 {
@@ -10,7 +12,7 @@ namespace Aula02.Repositories
         public OperadoraRepository()
         {
             conexao = new SqlConnection(
-            @"Server=LAB-01-MICRO-15\SQLEXPRESS;
+            @"Server=LAB-01-MICRO-10\SQLEXPRESS;
             Database=AgendaFoneDb;
             Trusted_Connection=True;"
         );
@@ -18,7 +20,7 @@ namespace Aula02.Repositories
 
         }
 
-        public IList<string> BuscarTodas()
+        public IList<Operadora> BuscarTodas()
         {
             try
             {
@@ -27,11 +29,14 @@ namespace Aula02.Repositories
                 string sql = "SELECT * FROM TbOperadora";
                 using SqlCommand command = new SqlCommand(sql, conexao);
                 using SqlDataReader reader = command.ExecuteReader();
-                var retorno = new List<string>();
+                var retorno = new List<Operadora>();
 
                 while (reader.Read())
                 {
-                    retorno.Add(reader["OpeNome"].ToString() ?? "");
+                    var operadora = new Operadora();
+                    operadora.OpeId = reader.GetInt32("OpeId");
+                    operadora.OpeNome = reader.GetString("OpeNome");
+                    retorno.Add(operadora);
                 }
 
                 return retorno;
@@ -42,7 +47,7 @@ namespace Aula02.Repositories
             }
         }
 
-        public bool Adicionar(String nome)
+        public bool Adicionar(Operadora operadora)
 
         {
             try
@@ -50,23 +55,88 @@ namespace Aula02.Repositories
                 conexao.Open();
 
                 string sql = "INSERT INTO TbOperadora (OpeNome) VALUES (@OpeNome)";
-
                 using SqlCommand command = new SqlCommand(sql, conexao);
-                // command.Parameters.Add("@OpeNome", SqlDbType.VarChar).Value = nome;
-                command.Parameters.AddWithValue("@OpeNome", nome);
-
+                command.Parameters.AddWithValue("@OpeNome", operadora.OpeNome);
                 command.ExecuteNonQuery();
 
                 return true;
 
             }
-            catch
-            {
-                return false;
-            }
             finally
             {
                 conexao.Open();
+            }
+        }
+
+        public bool Alterar(Operadora operadora)
+        {
+            try
+            {
+                conexao.Open();
+
+                string sql = @"UPDATE TbOperadora SET OpeNome = @OpeNome WHERE OpeId = @OpeId";
+
+                using var command = new SqlCommand(sql, conexao);
+                command.Parameters.AddWithValue("OpeNome", operadora.OpeNome);
+                command.Parameters.AddWithValue("OpeId", operadora.OpeId);
+
+                command.ExecuteNonQuery();
+
+                return true;
+            }
+            finally
+            { 
+                conexao.Close();
+            }
+        }
+
+        public bool Apagar(int codigo)
+        {
+            try
+            {
+                conexao.Open();
+
+                string sql = "DELETE FROM TbOperadora WHERE OpeId = @OpeId";
+                using var command = new SqlCommand(sql, conexao);
+                command.Parameters.AddWithValue("@OpeId", codigo);
+
+                command.ExecuteNonQuery();
+
+                return true;
+            }
+            finally
+            { 
+                conexao.Close();
+            }
+        }
+
+        public Operadora? BuscarPorId(int codigo)
+        {
+            try
+            {
+                conexao.Open();
+
+                string sql = "SELECT * FROM TbOperadora WHERE OpeId = @OpeId";
+                using var command = new SqlCommand(sql, conexao);
+                command.Parameters.AddWithValue("@OpeId", codigo);
+
+                var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var Operadora = new Operadora
+                    {
+                        OpeId = reader.GetInt32("OpeId"),
+                        OpeNome = reader.GetString("OpeNome")
+                    };
+
+                    return Operadora;
+                }
+                return null;
+            }
+            finally
+            {
+                conexao.Close();
             }
         }
     }
