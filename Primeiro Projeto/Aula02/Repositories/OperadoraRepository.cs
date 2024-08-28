@@ -1,23 +1,18 @@
 ﻿using Aula02.Models;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace Aula02.Repositories
 {
-
     public class OperadoraRepository
     {
         SqlConnection conexao;
 
-        public OperadoraRepository()
+        public OperadoraRepository(IConfiguration config)
         {
-            conexao = new SqlConnection(
-            @"Server=LAB-01-MICRO-10\SQLEXPRESS;
-            Database=AgendaFoneDb;
-            Trusted_Connection=True;"
-        );
-            //            Encrypt=False;
-
+            var connectionString = config.GetConnectionString("conexao");
+            conexao = new SqlConnection(connectionString);
         }
 
         public IList<Operadora> BuscarTodas()
@@ -48,7 +43,6 @@ namespace Aula02.Repositories
         }
 
         public bool Adicionar(Operadora operadora)
-
         {
             try
             {
@@ -60,11 +54,10 @@ namespace Aula02.Repositories
                 command.ExecuteNonQuery();
 
                 return true;
-
             }
             finally
             {
-                conexao.Open();
+                conexao.Close();
             }
         }
 
@@ -74,18 +67,21 @@ namespace Aula02.Repositories
             {
                 conexao.Open();
 
-                string sql = @"UPDATE TbOperadora SET OpeNome = @OpeNome WHERE OpeId = @OpeId";
+                string sql = @"
+                    UPDATE TbOperadora SET
+                        OpeNome = @OpeNome
+                    WHERE OpeId = @OpeId";
 
                 using var command = new SqlCommand(sql, conexao);
-                command.Parameters.AddWithValue("OpeNome", operadora.OpeNome);
-                command.Parameters.AddWithValue("OpeId", operadora.OpeId);
+                command.Parameters.AddWithValue("@OpeNome", operadora.OpeNome);
+                command.Parameters.AddWithValue("@OpeId", operadora.OpeId);
 
                 command.ExecuteNonQuery();
 
                 return true;
             }
             finally
-            { 
+            {
                 conexao.Close();
             }
         }
@@ -105,7 +101,7 @@ namespace Aula02.Repositories
                 return true;
             }
             finally
-            { 
+            {
                 conexao.Close();
             }
         }
@@ -124,13 +120,12 @@ namespace Aula02.Repositories
 
                 while (reader.Read())
                 {
-                    var Operadora = new Operadora
-                    {
+                    var operadora = new Operadora {
                         OpeId = reader.GetInt32("OpeId"),
                         OpeNome = reader.GetString("OpeNome")
                     };
 
-                    return Operadora;
+                    return operadora;
                 }
                 return null;
             }
@@ -140,6 +135,4 @@ namespace Aula02.Repositories
             }
         }
     }
-
 }
-

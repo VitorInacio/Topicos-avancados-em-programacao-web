@@ -1,9 +1,6 @@
 ﻿using Aula02.Models;
 using Aula02.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace Aula02.Controllers;
 
@@ -11,14 +8,12 @@ namespace Aula02.Controllers;
 [ApiController]
 public class OperadoraController : ControllerBase
 {
-
     OperadoraRepository repository;
 
-    public OperadoraController()
+    public OperadoraController(IConfiguration config)
     {
-        repository = new OperadoraRepository();
+        repository = new OperadoraRepository(config);
     }
-
 
     [HttpGet]
     public IActionResult BuscarTodas()
@@ -28,21 +23,20 @@ public class OperadoraController : ControllerBase
             var lista = repository.BuscarTodas();
             if (lista.Any()) //if (lista.Count > 0)
             {
-                return Ok(lista); //StatusCode(200, lista)
+                return Ok(lista); //StatusCode(200, lista);
             }
             else
             {
-                return NoContent(); //StatusCode(204)
+                return NoContent(); //StatusCode(204);
             }
         }
-        catch (Exception ex) {
-            {
-                return StatusCode(500, ex.Message);
-            }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
     }
 
-    [HttpPost]                //Não é necessário o [FromBody] nesse caso
+    [HttpPost]
     public IActionResult Adicionar([FromBody] Operadora operadora)
     {
         try
@@ -56,11 +50,12 @@ public class OperadoraController : ControllerBase
     }
 
     [HttpPut]
-    public IActionResult Alerar(Operadora operadora)
+    public IActionResult Alterar(Operadora operadora)
     {
         try
         {
-            return Ok(repository.Alterar(operadora));
+            var result = repository.Alterar(operadora);
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -81,13 +76,14 @@ public class OperadoraController : ControllerBase
             return StatusCode(500, ex.Message);
         }
     }
-
-    [HttpGet("{codigo}")] // [Route ("{codigo}")]
+    
+    [HttpGet("{codigo}")]
     public IActionResult BuscarPorId(int codigo)
     {
         try
         {
-            return Ok(repository.BuscarPorId(codigo));
+            var result = repository.BuscarPorId(codigo);
+            return Ok(result);
         }
         catch (Exception ex)
         {
