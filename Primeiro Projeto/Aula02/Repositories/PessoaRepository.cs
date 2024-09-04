@@ -29,7 +29,7 @@ namespace Aula02.Repositories
             return conexao.QueryFirstOrDefault<Pessoa?>(sql, parametros);
         }
 
-        public int Adicionar(Pessoa pessoa) 
+        public int Adicionar(Pessoa pessoa)
         {
             var sql = "INSERT INTO TbPessoa (PesNome) VALUES (@PesNome)";
             var parametros = new { pessoa.PesNome };

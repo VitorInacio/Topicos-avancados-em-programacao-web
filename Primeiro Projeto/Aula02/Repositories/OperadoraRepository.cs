@@ -1,11 +1,12 @@
 ﻿using Aula02.Models;
+using Aula02.Repositories.Interfaces;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace Aula02.Repositories
 {
-    public class OperadoraRepository
+    public class OperadoraRepository : IOperadoraRepository
     {
         SqlConnection conexao;
 

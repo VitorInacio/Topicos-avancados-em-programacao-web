@@ -1,3 +1,4 @@
+using Aula02.Repositories;
 using Aula02.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 //DI - Dependency Injetction 
-builder.Services.AddSingleton<IPessoaRepository, IPessoaRepository>();
+builder.Services.AddSingleton<IPessoaRepository, PessoaRepository>();
+builder.Services.AddScoped<IOperadoraRepository, OperadoraRepository>();
 //DI - Dependency Injetction 
 
 

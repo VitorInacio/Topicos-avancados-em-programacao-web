@@ -1,5 +1,6 @@
 ﻿using Aula02.Models;
 using Aula02.Repositories;
+using Aula02.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aula02.Controllers;
@@ -8,11 +9,11 @@ namespace Aula02.Controllers;
 [ApiController]
 public class OperadoraController : ControllerBase
 {
-    OperadoraRepository repository;
+    private readonly IOperadoraRepository repository;
 
-    public OperadoraController(IConfiguration config)
+    public OperadoraController(IOperadoraRepository operadoraRepository)
     {
-        repository = new OperadoraRepository(config);
+        repository = operadoraRepository;
     }
 
     [HttpGet]
