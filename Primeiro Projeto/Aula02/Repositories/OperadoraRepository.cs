@@ -1,6 +1,5 @@
 ﻿using Aula02.Models;
 using Aula02.Repositories.Interfaces;
-using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -8,7 +7,7 @@ namespace Aula02.Repositories
 {
     public class OperadoraRepository : IOperadoraRepository
     {
-        SqlConnection conexao;
+        private readonly SqlConnection conexao;
 
         public OperadoraRepository(IConfiguration config)
         {
@@ -121,7 +120,8 @@ namespace Aula02.Repositories
 
                 while (reader.Read())
                 {
-                    var operadora = new Operadora {
+                    var operadora = new Operadora
+                    {
                         OpeId = reader.GetInt32("OpeId"),
                         OpeNome = reader.GetString("OpeNome")
                     };

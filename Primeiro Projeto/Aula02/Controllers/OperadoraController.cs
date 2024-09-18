@@ -2,6 +2,7 @@
 using Aula02.Repositories;
 using Aula02.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Aula02.Controllers;
 
@@ -10,10 +11,13 @@ namespace Aula02.Controllers;
 public class OperadoraController : ControllerBase
 {
     private readonly IOperadoraRepository repository;
+    private readonly IMemoryCache _memoryCache;
 
-    public OperadoraController(IOperadoraRepository operadoraRepository)
+    public OperadoraController(IOperadoraRepository operadoraRepository,
+        IMemoryCache memoryCache)
     {
         repository = operadoraRepository;
+        _memoryCache = memoryCache;
     }
 
     [HttpGet]
@@ -21,7 +25,19 @@ public class OperadoraController : ControllerBase
     {
         try
         {
-            var lista = repository.BuscarTodas();
+            var chaveCache = "operadoras";
+            IList<Operadora> lista;
+
+            if (_memoryCache.TryGetValue(chaveCache, out lista) == false)
+            {
+                lista = repository.BuscarTodas();
+
+                var optionsCache = new MemoryCacheEntryOptions();
+                optionsCache.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);
+
+                _memoryCache.Set(chaveCache, lista, optionsCache);
+            }
+
             if (lista.Any()) //if (lista.Count > 0)
             {
                 return Ok(lista); //StatusCode(200, lista);

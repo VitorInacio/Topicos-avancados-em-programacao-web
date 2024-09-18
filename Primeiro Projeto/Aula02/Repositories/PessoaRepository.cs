@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 
 namespace Aula02.Repositories
 {
+    //Dapper
     public class PessoaRepository : IPessoaRepository
     {
         SqlConnection conexao;
@@ -26,7 +27,27 @@ namespace Aula02.Repositories
             var parametros = new { PesId = id };
 
             //return conexao.Query<Pessoa>(sql, parametros).FirstOrDefault();
-            return conexao.QueryFirstOrDefault<Pessoa?>(sql, parametros);
+            return conexao.QueryFirstOrDefault<Pessoa>(sql, parametros);
+        }
+
+        public IEnumerable<Pessoa> BuscarComFone()
+        {
+            var lista = new List<Pessoa>();
+            var sql = @"
+                SELECT P.PesId,  P.PesNome, T.TelId, T.TelNumero
+                FROM TbPessoa P
+                LEFT JOIN TbTelefone T ON T.PesId = P.PesId";
+
+            var pessoas = conexao.Query<Pessoa, Telefone, Pessoa>(
+                sql, (pessoa, telefone) =>
+                {
+                    pessoa.AddTelefone(telefone);
+                    return pessoa;
+                },
+                splitOn: "TelId"
+            );
+
+            return pessoas;
         }
 
         public int Adicionar(Pessoa pessoa)
@@ -41,6 +62,7 @@ namespace Aula02.Repositories
         {
             var sql = "UPDATE TbPessoa SET PesNome = @PesNome WHERE PesId = @PesId";
             var parametros = new { pessoa.PesNome, pessoa.PesId };
+
             return conexao.Execute(sql, parametros);
         }
 

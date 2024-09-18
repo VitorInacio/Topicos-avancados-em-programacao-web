@@ -2,6 +2,7 @@
 using Aula02.Repositories;
 using Aula02.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Aula02.Controllers
 {
@@ -9,11 +10,13 @@ namespace Aula02.Controllers
     [ApiController]
     public class PessoaController : ControllerBase
     {
-        IPessoaRepository pessoaRepository;
+        private readonly IPessoaRepository pessoaRepository;
+        private readonly IMemoryCache _memoryCache;
 
-        public PessoaController(IPessoaRepository repository)
+        public PessoaController(IPessoaRepository repository, IMemoryCache memoryCache)
         {
             pessoaRepository = repository;
+            _memoryCache = memoryCache;
         }
 
         [HttpGet]
@@ -21,7 +24,21 @@ namespace Aula02.Controllers
         {
             try
             {
-                var lista = pessoaRepository.BuscarTodas();
+                string chaveCache = "Pessoas";
+                IList<Pessoa> lista;
+
+                if (_memoryCache.TryGetValue(chaveCache, out lista) == false) 
+                {
+                    lista = pessoaRepository.BuscarTodas().ToList();
+                    
+                    var optionsCache = new MemoryCacheEntryOptions 
+                    { 
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+                    };
+
+                    _memoryCache.Set(chaveCache, lista, optionsCache);
+                };
+
                 return Ok(lista);
             }
             catch (Exception ex)
@@ -66,9 +83,9 @@ namespace Aula02.Controllers
                 var result = pessoaRepository.Alterar(pessoa);
                 return Ok(result);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -80,10 +97,17 @@ namespace Aula02.Controllers
                 var result = pessoaRepository.Excluir(id);
                 return Ok(result);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet("fone")]
+        public IActionResult BuscarComFone()
+        {
+            var result = pessoaRepository.BuscarComFone();
+            return Ok(result);
         }
     }
 }

@@ -6,10 +6,9 @@ namespace Aula02.Repositories.Interfaces
     {
         public IList<Operadora> BuscarTodas();
         public Operadora? BuscarPorId(int codigo);
+
         public bool Adicionar(Operadora operadora);
         public bool Alterar(Operadora operadora);
-        public bool Apagar(int id);
-
-
+        public bool Apagar(int codigo);
     }
 }

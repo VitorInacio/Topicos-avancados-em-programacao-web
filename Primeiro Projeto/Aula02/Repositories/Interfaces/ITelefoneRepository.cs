@@ -6,8 +6,9 @@ namespace Aula02.Repositories.Interfaces
     {
         IEnumerable<Telefone> BuscarTodos();
         Telefone? BuscarPorId(int id);
+
         int Adicionar(Telefone telefone);
         int Alterar(Telefone telefone);
-        int Excluir(int  id);
+        int Excluir(int id);
     }
 }

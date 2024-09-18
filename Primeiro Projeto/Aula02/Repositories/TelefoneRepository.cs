@@ -7,50 +7,48 @@ namespace Aula02.Repositories
 {
     public class TelefoneRepository : ITelefoneRepository
     {
-        private readonly SqlConnection _conexao;
+        private readonly SqlConnection _connection;
 
         public TelefoneRepository(IConfiguration config)
         {
             var connectionString = config.GetConnectionString("conexao");
-            _conexao = new SqlConnection(connectionString);
-
+            _connection = new SqlConnection(connectionString);
         }
 
         public IEnumerable<Telefone> BuscarTodos()
         {
-            return _conexao.Query<Telefone>("SELECT * FROM TbTelefone");
+            return _connection.Query<Telefone>("SELECT * FROM TbTelefone");
         }
 
         public Telefone? BuscarPorId(int id)
         {
             string sql = "SELECT * FROM TbTelefone WHERE TelId = @id";
-            var parametos = new { id };
+            var parametros = new { id };
 
-            return _conexao.QueryFirst<Telefone>(sql, parametos);
+            return _connection.QueryFirst<Telefone>(sql, parametros);
         }
 
         public int Adicionar(Telefone telefone)
         {
-            string sql = "INSERT INTO TbTelefone (TelNumero, OpeId, PesId) "
-                + "VALUES (@TelNumero, @OpeId, @PesId)";
-            var parametos = new
+            var sql = "INSERT INTO TbTelefone (TelNumero, OpeId, PesId) " +
+                      "VALUES (@TelNumero, @OpeId, @PesId)";
+            var parametros = new
             {
                 telefone.TelNumero,
                 telefone.OpeId,
                 telefone.PesId
             };
 
-            return _conexao.Execute(sql, parametos);
-
+            return _connection.Execute(sql, parametros);
         }
 
         public int Alterar(Telefone telefone)
         {
-            var sql = @"UPDATE TbTelefone SET 
-                            TelNumero = @TelNumero, 
-                            OpeId = @OpeId, 
-                            PesId = @PesId 
-                        Where TelId = @TelId";
+            var sql = @"UPDATE TbTelefone SET
+                            TelNumero = @TelNumero,
+                            OpeId = @OpeId,
+                            PesId = @PesId
+                        WHERE TelId = @TelId ";
 
             var parametros = new
             {
@@ -59,7 +57,8 @@ namespace Aula02.Repositories
                 telefone.OpeId,
                 telefone.PesId
             };
-            return _conexao.Execute(sql, parametros);
+
+            return _connection.Execute(sql, parametros);
         }
 
         public int Excluir(int id)
@@ -67,8 +66,7 @@ namespace Aula02.Repositories
             var sql = "DELETE FROM TbTelefone WHERE TelId = @id";
             var parametros = new { id };
 
-            return _conexao.Execute(sql, parametros);
+            return _connection.Execute(sql, parametros);
         }
-
     }
 }

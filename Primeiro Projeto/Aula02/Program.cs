@@ -5,10 +5,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-//DI - Dependency Injetction 
-builder.Services.AddSingleton<IPessoaRepository, PessoaRepository>();
+//DI - Dependency Injection - Injecao de Dependencia       -- IMPORTANTE para prova
+
+//builder.Services.AddSingleton<IPessoaRepository, PessoaRepository>();   AddSingleton - um para todo a aplicação
+//builder.Services.AddTransient<IPessoaRepository, PessoaRepository>();   AddTransient - toda vez cria um item
+builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();         //AddScoped - reaproveita o item 
 builder.Services.AddScoped<IOperadoraRepository, OperadoraRepository>();
-//DI - Dependency Injetction 
+builder.Services.AddScoped<ITelefoneRepository, TelefoneRepository>();
+
+//Adicionando o servico de cache na aplicacao
+builder.Services.AddMemoryCache();
+
+//DI - Dependency Injection - Injecao de Dependencia
+
 
 
 builder.Services.AddControllers();
