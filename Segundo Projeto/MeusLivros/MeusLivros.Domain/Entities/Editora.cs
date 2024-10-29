@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MeusLivros.Domain.Entities
+﻿namespace MeusLivros.Domain.Entities
 {
-    internal class Editora : Entity
+    public class Editora : Entity
     {
         #region | Propriedades |
 
@@ -17,12 +11,11 @@ namespace MeusLivros.Domain.Entities
 
         #region | Construtores |
 
-        public Editora(string Nome)
+        public Editora(string nome)
         {
-            Nome = Nome;
+            Nome = nome;
             Livros = new List<Livro>();
         }
-
         public Editora(int id, string nome)
         {
             Id = id;
@@ -31,6 +24,5 @@ namespace MeusLivros.Domain.Entities
         }
 
         #endregion
-
     }
 }
