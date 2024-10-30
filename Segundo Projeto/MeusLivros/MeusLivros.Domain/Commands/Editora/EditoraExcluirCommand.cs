@@ -8,27 +8,21 @@ using System.Threading.Tasks;
 
 namespace MeusLivros.Domain.Commands.Editora
 {
-    public class EditoraAlterarCommand : Notificavel, ICommand
+    public class EditoraExcluirCommand : Notificavel, ICommand
     {
         public int Id { get; set; }
-        public string Nome { get; set; }
 
-        public EditoraAlterarCommand(int id, string nome)
+        public EditoraExcluirCommand(int id)
         {
-            this.Id = id;
-            this.Nome = nome;
+            Id = id;
         }
 
         public void Validar()
         {
-            if (Id == 0)
+            if (Id <= 0)
             {
                 AddNotificacao("Código informado inválido");
-            };
-            if (string.IsNullOrEmpty(Nome.Trim()))
-            {
-                AddNotificacao("O nome da editora é obrigatório");
-            };
+            }
         }
     }
 }
