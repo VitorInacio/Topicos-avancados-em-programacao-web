@@ -1,4 +1,4 @@
-﻿using MeusLivros.Domain.Commands.Editora;
+﻿using MeusLivros.Domain.Commands.Livro;
 using MeusLivros.Domain.Commands.Interfaces;
 using MeusLivros.Domain.Handlers;
 using MeusLivros.Domain.Repositories;
@@ -8,35 +8,35 @@ namespace MeusLivros.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EditoraController : ControllerBase
+    public class LivroController : ControllerBase
     {
-        private readonly EditoraHandler _editoraHandler;
-        private readonly IEditoraRepository _repository;
+        private readonly LivroHandler _livroHandler;
+        private readonly ILivroRepository _repository;
 
-        public EditoraController(EditoraHandler editoraHandler, IEditoraRepository repository)
+        public LivroController(LivroHandler livroHandler, ILivroRepository repository)
         {
-            _editoraHandler = editoraHandler;
+            _livroHandler = livroHandler;
             _repository = repository;
         }
 
         [HttpPost]
-        public ICommandResult Inserir(EditoraInserirCommand command)
+        public ICommandResult Inserir(LivroInserirCommand command)
         {
-            var result = _editoraHandler.Execute(command);
+            var result = _livroHandler.Execute(command);
             return result;
         }
 
         [HttpPut]
-        public ICommandResult Alterar(EditoraAlterarCommand command)
+        public ICommandResult Alterar(LivroAlterarCommand command)
         {
-            var result = _editoraHandler.Execute(command);
+            var result = _livroHandler.Execute(command);
             return result;
         }
 
         [HttpDelete]
-        public ICommandResult Excluir(EditoraExcluirCommand command)
+        public ICommandResult Excluir(LivroExcluirCommand command)
         {
-            var result = _editoraHandler.Execute(command);
+            var result = _livroHandler.Execute(command);
             return result;
         }
 

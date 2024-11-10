@@ -12,6 +12,8 @@ namespace MeusLivros.Infra.Contexts
             : base(options) { }
 
         public DbSet<Editora> Editoras { get; set; }
+        public DbSet<Livro> Livros { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
